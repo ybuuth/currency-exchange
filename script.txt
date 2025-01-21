@@ -1,0 +1,52 @@
+DROP TABLE IF EXISTS currencies;
+DROP TABLE IF EXISTS exchange_rates;
+
+CREATE TABLE currencies 
+	(id integer PRIMARY KEY AUTOINCREMENT, 
+	code varchar(3) UNIQUE, 
+	full_name varchar, 
+	sign varchar(5));
+
+CREATE UNIQUE INDEX currencies_code ON currencies(code);
+
+INSERT INTO currencies (code, full_name, sign)
+	VALUES ('ARS','Argentine Peso','');
+INSERT INTO currencies (code, full_name, sign)
+	VALUES  ('USD','US Dollar','');
+INSERT INTO currencies (code, full_name, sign)
+	VALUES ('AUD','Australian dollar','');
+INSERT INTO currencies (code, full_name, sign)
+	VALUES ('EUR','Euro','');
+INSERT INTO currencies (code, full_name, sign)
+	VALUES ('BRL','Brazilian Real','');
+INSERT INTO currencies (code, full_name, sign)
+	VALUES ('CZK','Czech Koruna','');
+
+CREATE TABLE exchange_rates 
+	(id integer PRIMARY KEY AUTOINCREMENT, 
+	base_currency_id integer,
+	target_currency_id integer,
+	rate decimal(6));
+
+CREATE UNIQUE INDEX 
+	exchange_rates_base_currency_id_and_target_currency_id ON exchange_rates(base_currency_id, 
+	target_currency_id);
+
+INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) 
+	VALUES (1,3, 4.005044);
+INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) 
+	VALUES (1,4, 1.005044);
+INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) 
+	VALUES (1,5, 3.005044);
+INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) 
+	VALUES (1,6, 5.005044);
+INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate)
+    VALUES (1,2, 6.005044);
+
+Select * from currencies;
+
+Select * from exchange_rates;
+
+Select * from exchange_rates er join currencies c on er.base_currency_id = c.id;
+Select * from exchange_rates er join currencies c on er.base_currency_id = c.id join currencies c1 on er.target_currency_id=c1.id;
+
