@@ -11,27 +11,6 @@ import java.util.Properties;
 public class DatabaseConnector {
 
     public DatabaseConnector(){};
-    
-    private static Properties PROPERTIES;
-
-    static {
-        loadProperties();
-    }
-
-    private static void loadProperties() {
-        ClassLoader classLoader = DatabaseConnector.class.getClassLoader();
-        PROPERTIES = new Properties();
-        try (InputStream inputStream = classLoader.getResourceAsStream("WEB-INF/application.properties")) {
-
-            if (inputStream == null) {
-                System.out.println("Sorry, unable to find config.properties");
-                return;
-            }
-            PROPERTIES.load(inputStream);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public Connection getConnection() throws SQLException, ClassNotFoundException {
 

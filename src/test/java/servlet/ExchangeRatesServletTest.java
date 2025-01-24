@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ExchangeRatesServletTest {
 
-    @Disabled
     @Test
     void doGet() {
 
