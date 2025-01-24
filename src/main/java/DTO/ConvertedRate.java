@@ -1,8 +1,9 @@
-package model;
+package DTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import model.Currency;
 
 import java.math.BigDecimal;
 
@@ -13,15 +14,15 @@ public class ConvertedRate {
     private Currency baseCurrency;
     private Currency targetCurrency;
     private BigDecimal rate;
-    private Double amount;
-    private Double convertedAmount;
+    private BigDecimal amount;
+    private BigDecimal convertedAmount;
 
-    public ConvertedRate(Currency baseCurrency, Currency targetCurrency, BigDecimal rate, Double amount) {
+    public ConvertedRate(Currency baseCurrency, Currency targetCurrency, BigDecimal rate, BigDecimal amount) {
         this.baseCurrency = baseCurrency;
         this.targetCurrency = targetCurrency;
         this.rate = rate;
         this.amount = amount;
-        this.convertedAmount = rate.multiply(BigDecimal.valueOf(amount)).doubleValue();
+        this.convertedAmount = rate.multiply(amount);
     }
 
 }

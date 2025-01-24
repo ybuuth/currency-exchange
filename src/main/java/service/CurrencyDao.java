@@ -17,8 +17,7 @@ import java.util.Map;
 @Data
 public class CurrencyDao implements Dao<Currency, Integer> {
 
-    private static final CurrencyDao INSTANCE = new CurrencyDao();
-    private static final DatabaseConnector CONNECTOR = DatabaseConnector.getInstance();
+    private final DatabaseConnector connector;
 
     private final String QUERY_FIND_ALL = """
             Select * from currencies
@@ -36,10 +35,8 @@ public class CurrencyDao implements Dao<Currency, Integer> {
             select c1.id, c1.code from currencies c1 where c1.code=?2
             """;
 
-    private CurrencyDao() {}
-
-    public static CurrencyDao getINSTANCE() {
-        return INSTANCE;
+    public CurrencyDao(DatabaseConnector connector) {
+        this.connector = connector;
     }
 
     @Override
@@ -47,7 +44,7 @@ public class CurrencyDao implements Dao<Currency, Integer> {
 
         List<Currency> currencies = new ArrayList<>();
 
-        try (Connection connection = CONNECTOR.getConnection()){
+        try (Connection connection = connector.getConnection()){
 
             PreparedStatement statement = connection.prepareStatement(QUERY_FIND_ALL);
             ResultSet resultSet = statement.executeQuery();
@@ -74,7 +71,7 @@ public class CurrencyDao implements Dao<Currency, Integer> {
     @Override
     public Currency findByCode(String code) {
 
-        try (Connection connection = CONNECTOR.getConnection()) {
+        try (Connection connection = connector.getConnection()) {
 
             PreparedStatement statement = connection.prepareStatement(QUERY_FIND_BY_CODE);
             statement.setString(1, code);
@@ -94,7 +91,7 @@ public class CurrencyDao implements Dao<Currency, Integer> {
 
         Map<String, Integer> ids = new HashMap<>();
 
-        try (Connection connection = CONNECTOR.getConnection()) {
+        try (Connection connection = connector.getConnection()) {
 
             PreparedStatement statement = connection.prepareStatement(QUERY_GET_PAIR_BY_CODE);
             statement.setString(1, code1);
@@ -111,12 +108,12 @@ public class CurrencyDao implements Dao<Currency, Integer> {
     }
 
     public Currency save(Currency currency) {
-        try (Connection connection = CONNECTOR.getConnection()) {
+        try (Connection connection = connector.getConnection()) {
 
             PreparedStatement statement = connection.prepareStatement(QUERY_SAVE_CURRENCY);
             statement.setString(1, currency.getCode());
             statement.setString(2, currency.getName());
-            statement.setString(3, currency.getSign());
+            statement.setString(3, String.valueOf(currency.getSign()));
 
             int num = statement.executeUpdate();
             if (num >0) {

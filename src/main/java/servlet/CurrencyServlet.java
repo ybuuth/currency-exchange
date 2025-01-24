@@ -1,6 +1,7 @@
 package servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +16,12 @@ import java.io.PrintWriter;
 @WebServlet("/currency/*")
 public class CurrencyServlet extends HttpServlet {
 
-    private final CurrencyDao currencyDao = CurrencyDao.getINSTANCE();
+    private CurrencyDao currencyDao;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        currencyDao = (CurrencyDao) config.getServletContext().getAttribute("currencyDao");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -10,27 +10,37 @@ CREATE TABLE currencies
 CREATE UNIQUE INDEX currencies_code ON currencies(code);
 
 INSERT INTO currencies (code, full_name, sign)
-	VALUES ('ARS','Argentine Peso','');
+	VALUES ('ARS','Argentine Peso','$');
 INSERT INTO currencies (code, full_name, sign)
-	VALUES  ('USD','US Dollar','');
+	VALUES  ('USD','US Dollar','$');
 INSERT INTO currencies (code, full_name, sign)
-	VALUES ('AUD','Australian dollar','');
+	VALUES ('AUD','Australian dollar','A$');
 INSERT INTO currencies (code, full_name, sign)
-	VALUES ('EUR','Euro','');
+	VALUES ('EUR','Euro','€');
 INSERT INTO currencies (code, full_name, sign)
-	VALUES ('BRL','Brazilian Real','');
+	VALUES ('BRL','Brazilian Real','R$');
 INSERT INTO currencies (code, full_name, sign)
-	VALUES ('CZK','Czech Koruna','');
+	VALUES ('CZK','Czech Koruna','Kč');
 
 CREATE TABLE exchange_rates 
 	(id integer PRIMARY KEY AUTOINCREMENT, 
 	base_currency_id integer,
 	target_currency_id integer,
-	rate decimal(6));
+	rate decimal(6),
+	CONSTRAINT base_currency_fk
+	FOREIGN KEY (base_currency_id)
+	REFERENCES currencies (id),
+	CONSTRAINT target_currency_fk
+	FOREIGN KEY (target_currency_id)
+	REFERENCES currencies (id));
+
 
 CREATE UNIQUE INDEX 
 	exchange_rates_base_currency_id_and_target_currency_id ON exchange_rates(base_currency_id, 
 	target_currency_id);
+
+PRAGMA foreign_keys = ON;
+
 
 INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate) 
 	VALUES (1,3, 4.005044);
@@ -42,11 +52,3 @@ INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate)
 	VALUES (1,6, 5.005044);
 INSERT INTO exchange_rates (base_currency_id, target_currency_id, rate)
     VALUES (1,2, 6.005044);
-
-Select * from currencies;
-
-Select * from exchange_rates;
-
-Select * from exchange_rates er join currencies c on er.base_currency_id = c.id;
-Select * from exchange_rates er join currencies c on er.base_currency_id = c.id join currencies c1 on er.target_currency_id=c1.id;
-

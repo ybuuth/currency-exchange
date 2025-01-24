@@ -7,26 +7,27 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
-import java.io.File;
 
 public class DatabaseConnector {
 
-    private static final DatabaseConnector INSTANCE = new DatabaseConnector();
+    public DatabaseConnector(){};
     
-    private DatabaseConnector(){};
-
-    public static DatabaseConnector getInstance() {
-        return INSTANCE;
-    }
-    
-    private static Properties properties;
+    private static Properties PROPERTIES;
 
     static {
+        loadProperties();
+    }
+
+    private static void loadProperties() {
         ClassLoader classLoader = DatabaseConnector.class.getClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream("application.properties");
-         properties = new Properties();
-        try {
-            properties.load(inputStream);
+        PROPERTIES = new Properties();
+        try (InputStream inputStream = classLoader.getResourceAsStream("WEB-INF/application.properties")) {
+
+            if (inputStream == null) {
+                System.out.println("Sorry, unable to find config.properties");
+                return;
+            }
+            PROPERTIES.load(inputStream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,8 +35,16 @@ public class DatabaseConnector {
 
     public Connection getConnection() throws SQLException, ClassNotFoundException {
 
-        String pathToBase = properties.getProperty("database.path");
         Class.forName("org.sqlite.JDBC");
-        return DriverManager.getConnection("jdbc:sqlite:data.db");
+        return DriverManager.getConnection("jdbc:sqlite::resource:data.db");
+    }
+
+    public void enableForeignKeys() throws SQLException, ClassNotFoundException {
+
+        String query  = """
+                PRAGMA foreign_keys = ON
+                """;
+        PreparedStatement statement = getConnection().prepareStatement(query);
+        statement.execute();
     }
 }

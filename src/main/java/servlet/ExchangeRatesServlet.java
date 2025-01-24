@@ -1,6 +1,7 @@
 package servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -22,14 +23,18 @@ import static com.fasterxml.jackson.databind.type.LogicalType.Map;
 @WebServlet("/exchangeRates")
 public class ExchangeRatesServlet extends HttpServlet {
 
-    private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+    private ExchangeRateDao exchangeRateDao;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final CurrencyDao currencyDao = CurrencyDao.getINSTANCE();
+    private CurrencyDao currencyDao;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        exchangeRateDao = (ExchangeRateDao) config.getServletContext().getAttribute("exchangeRateDao");
+        currencyDao = (CurrencyDao) config.getServletContext().getAttribute("currencyDao");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        resp.setContentType("text/html;charset=UTF-8");
 
         List<ExchangeRate>rates = exchangeRateDao.findAll();
          objectMapper.writeValue(resp.getWriter(), rates);
@@ -40,7 +45,6 @@ public class ExchangeRatesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        resp.setContentType("text/html;charset=UTF-8");
         Map<String, String[]> parameters = req.getParameterMap();
 
         String baseCurrencyCode = null;

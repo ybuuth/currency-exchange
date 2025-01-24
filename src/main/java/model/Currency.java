@@ -6,10 +6,10 @@ import lombok.Data;
 @Data
 @JsonAutoDetect
 public class Currency{
-    Integer id;
-    String code;
-    String name;
-    String sign;
+    private Integer id;
+    private String code;
+    private String name;
+    private String sign;
 
     public Currency() {}
 

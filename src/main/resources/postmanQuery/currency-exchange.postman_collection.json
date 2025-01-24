@@ -1,0 +1,227 @@
+{
+	"info": {
+		"_postman_id": "596f6c63-60ce-4dfe-872d-53b69f3cc0a2",
+		"name": "currency-exchange",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18926364"
+	},
+	"item": [
+		{
+			"name": "find all exchange rates",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "find all currencies",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "add new currency",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "Yuan",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "CNY",
+							"type": "text"
+						},
+						{
+							"key": "sign",
+							"value": "¥",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/currencies",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"currencies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "find 1 exchanfe rate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/exchangeRate/USDRUB",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exchangeRate",
+						"USDRUB"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new ExchangeRate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "baseCurrencyCode",
+							"value": "USD",
+							"type": "text"
+						},
+						{
+							"key": "targetCurrencyCode",
+							"value": "CZK",
+							"type": "text"
+						},
+						{
+							"key": "rate",
+							"value": "1.5404",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/exchangeRates",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exchangeRates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add new ExchangeRate not exists",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "baseCurrencyCode",
+							"value": "USD",
+							"type": "text"
+						},
+						{
+							"key": "targetCurrencyCode",
+							"value": "CVM",
+							"type": "text"
+						},
+						{
+							"key": "rate",
+							"value": "1.5404",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/exchangeRates",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exchangeRates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update exchange rate",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "rate",
+							"value": "2.04011",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/exchangeRate/ARSAUD",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"exchangeRate",
+						"ARSAUD"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get converted amount",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/Currency-exchange/exchange?from=usd&to=ars&amount=10.5",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"Currency-exchange",
+						"exchange"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "usd"
+						},
+						{
+							"key": "to",
+							"value": "ars"
+						},
+						{
+							"key": "amount",
+							"value": "10.5"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

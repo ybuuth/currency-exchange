@@ -1,28 +1,34 @@
 package servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.ConvertedRate;
+import DTO.ConvertedRate;
+import service.CurrencyDao;
 import service.ExchangeRateDao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Map;
 
 @WebServlet("/exchange")
 public class ExchangeServlet extends HttpServlet {
 
-    private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+    private ExchangeRateDao exchangeRateDao;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void init(ServletConfig config) throws ServletException {
+        exchangeRateDao = (ExchangeRateDao) config.getServletContext().getAttribute("exchangeRateDao");
+    }
 
-        resp.setContentType("text/html;charset=UTF-8");
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         try {
             for (Map.Entry<String, String[]> entry: req.getParameterMap().entrySet()) {
@@ -36,7 +42,7 @@ public class ExchangeServlet extends HttpServlet {
 
         String baseCode = req.getParameterMap().get("from")[0].toUpperCase();
         String targetCode = req.getParameterMap().get("to")[0].toUpperCase();
-        Double amount = Double.parseDouble(req.getParameterMap().get("amount")[0]);
+        BigDecimal amount = BigDecimal.valueOf(Double.parseDouble(req.getParameterMap().get("amount")[0]));
 
         try {
             ConvertedRate convertedRate = exchangeRateDao.findConvertedRateByPairCode(baseCode, targetCode, amount);

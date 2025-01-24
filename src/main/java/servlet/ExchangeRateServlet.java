@@ -2,12 +2,14 @@ package servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import exception.DatabaseException;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.ExchangeRate;
+import service.CurrencyDao;
 import service.ExchangeRateDao;
 
 import java.io.BufferedReader;
@@ -21,13 +23,17 @@ import java.util.Map;
 @WebServlet("/exchangeRate/*")
 public class ExchangeRateServlet extends HttpServlet {
 
-    private final ExchangeRateDao exchangeRateDao = ExchangeRateDao.getInstance();
+    private ExchangeRateDao exchangeRateDao;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+
+    @Override
+    public void init(ServletConfig config) {
+        exchangeRateDao = (ExchangeRateDao) config.getServletContext().getAttribute("exchangeRateDao");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        resp.setContentType("text/html;charset=UTF-8");
 
         try {
             List<String> codes = getParametersFromQuery(req, resp);
@@ -51,8 +57,6 @@ public class ExchangeRateServlet extends HttpServlet {
 
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-
-        resp.setContentType("text/html;charset=UTF-8");
 
         try {
             List<String> codes = getParametersFromQuery(req, resp);
@@ -89,7 +93,6 @@ public class ExchangeRateServlet extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
-
 
     private List<String> getParametersFromQuery(HttpServletRequest req, HttpServletResponse resp) throws ServletException {
 

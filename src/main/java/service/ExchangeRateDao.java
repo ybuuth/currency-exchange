@@ -1,7 +1,7 @@
 package service;
 
 import exception.DatabaseException;
-import model.ConvertedRate;
+import DTO.ConvertedRate;
 import model.Currency;
 import model.ExchangeRate;
 import util.DatabaseConnector;
@@ -13,9 +13,7 @@ import java.util.List;
 
 public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
 
-    private static final ExchangeRateDao INSTANCE = new ExchangeRateDao();
-    private final DatabaseConnector CONNECTOR = DatabaseConnector.getInstance();
-    private final CurrencyDao CURRENCY_DAO = CurrencyDao.getINSTANCE();
+    private final DatabaseConnector connector;
 
     private final String QUERY_FIND_ALL = """
             Select er.id, c.id base_id,c.code base_code, c.full_name as base_name, c.sign base_sign, c1.id target_id, c1.code code_id, c1.full_name target_name,\s
@@ -59,10 +57,8 @@ public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
             limit 1
             """;
 
-    private ExchangeRateDao() {}
-
-    public static ExchangeRateDao getInstance() {
-        return INSTANCE;
+    public ExchangeRateDao(DatabaseConnector connector) {
+        this.connector = connector;
     }
 
     @Override
@@ -70,7 +66,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
 
         List<ExchangeRate> rates = new ArrayList<>();
 
-        try (Connection connection = CONNECTOR.getConnection()){
+        try (Connection connection = connector.getConnection()){
 
             PreparedStatement statement = connection.prepareStatement(QUERY_FIND_ALL);
             ResultSet set = statement.executeQuery();
@@ -87,7 +83,7 @@ public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
 
     public ExchangeRate findByCurrencyPairCode(String code1, String code2) {
 
-        try (Connection connection = CONNECTOR.getConnection()) {
+        try (Connection connection = connector.getConnection()) {
 
             PreparedStatement statement = connection.prepareStatement(QUERY_FIND_BY_PAIR);
             statement.setString(1, code1);
@@ -106,10 +102,10 @@ public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
 
     public ExchangeRate saveExchangeRate(Integer baseCurrencyId, Integer targetCurrencyId, BigDecimal rate) {
 
-        try (PreparedStatement statement = CONNECTOR.getConnection().prepareStatement(
+        try (PreparedStatement statement = connector.getConnection().prepareStatement(
                 QUERY_SAVE_EXCHANGE_RATE,
                 Statement.RETURN_GENERATED_KEYS);
-             PreparedStatement  statement2 = CONNECTOR.getConnection().prepareStatement(QUERY_FIND_BY_ID)) {
+             PreparedStatement  statement2 = connector.getConnection().prepareStatement(QUERY_FIND_BY_ID)) {
 
             statement.setInt(1, baseCurrencyId);
             statement.setInt(2, targetCurrencyId);
@@ -145,9 +141,9 @@ public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
     }
     public ExchangeRate update(int id, BigDecimal rate)  {
 
-        try (PreparedStatement statement = CONNECTOR.getConnection().prepareStatement(
+        try (PreparedStatement statement = connector.getConnection().prepareStatement(
                 QUERY_UPDATE_BY_ID);
-             PreparedStatement statement2 = CONNECTOR.getConnection().prepareStatement(QUERY_FIND_BY_ID)) {
+             PreparedStatement statement2 = connector.getConnection().prepareStatement(QUERY_FIND_BY_ID)) {
 
             statement.setBigDecimal(1, rate);
             statement.setInt(2, id);
@@ -164,9 +160,9 @@ public class ExchangeRateDao implements Dao<ExchangeRate, Integer> {
         }
     }
 
-    public ConvertedRate findConvertedRateByPairCode(String baseCode, String targetCode, Double amount) throws SQLException, ClassNotFoundException {
+    public ConvertedRate findConvertedRateByPairCode(String baseCode, String targetCode, BigDecimal amount) throws SQLException, ClassNotFoundException {
 
-        PreparedStatement statement = CONNECTOR.getConnection().prepareStatement(QUERY_FIND_EXCHANGE_RATE_BY_PAIR_CODE);
+        PreparedStatement statement = connector.getConnection().prepareStatement(QUERY_FIND_EXCHANGE_RATE_BY_PAIR_CODE);
         statement.setString(1, baseCode);
         statement.setString(2, targetCode);
 

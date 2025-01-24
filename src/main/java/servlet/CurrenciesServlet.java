@@ -2,6 +2,7 @@ package servlet;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,12 +20,15 @@ import java.util.Map;
 @WebServlet("/currencies")
 public class CurrenciesServlet extends HttpServlet {
 
-    private final CurrencyDao currencyDao = CurrencyDao.getINSTANCE();
+    private CurrencyDao currencyDao;
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+        currencyDao = (CurrencyDao) config.getServletContext().getAttribute("currencyDao");
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
-        resp.setContentType("text/html;charset=UTF-8");
 
         List<Currency> currencies = null;
 
@@ -45,8 +49,6 @@ public class CurrenciesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        resp.setContentType("text/html;charset=UTF-8");
-        
         Currency currency = new Currency();
 
         for (Map.Entry<String, String[]> entry : req.getParameterMap().entrySet()) {

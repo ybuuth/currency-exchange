@@ -7,7 +7,7 @@ import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
-        DatabaseConnector connector = DatabaseConnector.getInstance();
+        DatabaseConnector connector = new DatabaseConnector();
         try (Connection connection = connector.getConnection()){
             PreparedStatement statement = connection.prepareStatement("Select * from currencies");
             ResultSet resultSet = statement.executeQuery();
